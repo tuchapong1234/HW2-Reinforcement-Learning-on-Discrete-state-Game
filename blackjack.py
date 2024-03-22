@@ -1,31 +1,33 @@
-from __future__ import annotations
+# Importing necessary modules and libraries
+from __future__ import annotations  
+from collections import defaultdict  
+import numpy as np  
+from enum import Enum 
+import os  
+import json  
 
-from collections import defaultdict
-
-import numpy as np
-from enum import Enum
-import os
-import json
-
-
+# Setting random seed for reproducibility
 np.random.seed(10)
 
+# Enum defining different types of Algorithms
 class ControlType(Enum):
     MONTE_CARLO = 1
     TEMPORAL_DIFFERENCE = 2
     Q_LEARNING = 3
     DOUBLE_Q_LEARNING = 4
 
+# Class representing a Blackjack agent
 class BlackJackAgent():
     def __init__(
             self,
-            control_type : ControlType,
-            learning_rate: float,
-            initial_epsilon: float,
-            epsilon_decay: float,
-            final_epsilon: float,
-            discount_factor: float = 0.95,
+            control_type: ControlType,  # Type of Algorithms
+            learning_rate: float,  # Learning rate for updating Q-values
+            initial_epsilon: float,  # Initial exploration rate
+            epsilon_decay: float,  # Rate of decay for exploration rate
+            final_epsilon: float,  # Final exploration rate
+            discount_factor: float = 0.95,  # Discount factor for future rewards
     ):
+        # Initializing parameters
         self.control_type = control_type
         self.lr = learning_rate
         self.discount_factor = discount_factor
@@ -33,26 +35,32 @@ class BlackJackAgent():
         self.epsilon_decay = epsilon_decay
         self.final_epsilon = final_epsilon
 
-        self.num_of_action = 2
+        self.num_of_action = 2  # Number of possible actions (hit or stick)
+        
+        # Initializing Q-values and visit counts using defaultdict
         self.q_values = defaultdict(lambda: np.zeros(self.num_of_action))
         self.n_values = defaultdict(lambda: np.zeros(self.num_of_action))
-        self.training_error = []
-
+        self.training_error = []  # List to store training errors
+        
+        # Additional initialization for specific Algorithms
         if self.control_type == ControlType.MONTE_CARLO:
-            self.obs_hist = []
-            self.action_hist = []
-            self.reward_hist = []
+            self.obs_hist = []  # History of observed states
+            self.action_hist = []  # History of actions taken
+            self.reward_hist = []  # History of received rewards
         elif self.control_type == ControlType.DOUBLE_Q_LEARNING:
+            # Initializing separate Q-values for Double Q-Learning
             self.qa_values = defaultdict(lambda: np.zeros(self.num_of_action))
             self.qb_values = defaultdict(lambda: np.zeros(self.num_of_action))
-            
 
+    # Method to get action based on current observation
     def get_action(self, obs: tuple[int, int, bool]) -> int:
+        # Epsilon-greedy policy for action selection
         if np.random.random() < self.epsilon:
-            return np.random.choice(self.num_of_action)
+            return np.random.choice(self.num_of_action)  # Random action with exploration
         else:
-            return int(np.argmax(self.q_values[obs]))
-        
+            return int(np.argmax(self.q_values[obs]))  # Greedy action based on Q-values
+
+    # Method for Q-Learning update
     def __Q_Learning_Update__(
         self,
         obs: tuple[int, int, bool],
@@ -61,16 +69,17 @@ class BlackJackAgent():
         next_obs: tuple[int, int, bool],
         terminated: bool
     ):
+        # Calculating temporal difference error
         future_q_value = (not terminated) * np.max(self.q_values[next_obs])
         temporal_difference = (
             reward + self.discount_factor * future_q_value - self.q_values[obs][action]
         )
-
-        self.q_values[obs][action] = (
-            self.q_values[obs][action] + self.lr * temporal_difference
-        )
+        # Updating Q-values
+        self.q_values[obs][action] += self.lr * temporal_difference
+        # Storing training error
         self.training_error.append(temporal_difference)
 
+    # Method for Double Q-Learning update
     def __Double_Q_Learning_Update__(
         self,
         obs: tuple[int, int, bool],
@@ -79,15 +88,14 @@ class BlackJackAgent():
         next_obs: tuple[int, int, bool],
         terminated: bool
     ):
+        # Randomly selecting which set of Q-values to update 
         if np.random.uniform(0, 1) < 0.5:
             max_next_action = np.argmax(self.qb_values[next_obs])
             future_q_value = (not terminated) * self.qa_values[next_obs][max_next_action]
             temporal_difference = (
                 reward + self.discount_factor * future_q_value - self.qb_values[obs][action]
             )
-            self.qb_values[obs][action] = (
-                self.qb_values[obs][action] + self.lr * temporal_difference
-            )
+            self.qb_values[obs][action] += self.lr * temporal_difference
             self.training_error.append(temporal_difference)
         else:
             max_next_action = np.argmax(self.qa_values[next_obs])
@@ -95,14 +103,13 @@ class BlackJackAgent():
             temporal_difference = (
                 reward + self.discount_factor * future_q_value - self.qa_values[obs][action]
             )
-            self.qa_values[obs][action] = (
-                self.qa_values[obs][action] + self.lr * temporal_difference
-            )
+            self.qa_values[obs][action] += self.lr * temporal_difference
             self.training_error.append(temporal_difference)
+        # Combining Q-values for Double Q-Learning
         for i in range(self.num_of_action):
             self.q_values[obs][i] = self.qa_values[obs][i] + self.qb_values[obs][i]
 
-
+    # Method for Monte Carlo update
     def __Monte_Carlo_Update__(
         self,
         obs: tuple[int, int, bool],
@@ -110,9 +117,11 @@ class BlackJackAgent():
         reward: float,
         terminated: bool
     ):
+        # Storing observed state, action, and reward
         self.obs_hist.append(obs)
         self.action_hist.append(action)
         self.reward_hist.append(reward)
+        # Update Q-values when episode terminates
         if terminated:
             Gt = 0.0
             for i in reversed(range(len(self.reward_hist))):
@@ -124,6 +133,7 @@ class BlackJackAgent():
                 )
                 self.q_values[self.obs_hist[i]][self.action_hist[i]] += (lr * temporal_difference)
                 self.training_error.insert(0, temporal_difference)
+            # Clearing history after episode completion
             self.obs_hist.clear()
             self.action_hist.clear()
             self.reward_hist.clear()

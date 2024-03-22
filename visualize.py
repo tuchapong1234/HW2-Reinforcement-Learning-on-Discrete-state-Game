@@ -47,6 +47,7 @@ def reward_count(n_episodes, n_chunks, data : np):
 def reward_plot(n_episodes, n_chunks, return_queue):
     return_array = np.array(return_queue).flatten()
     Culmulative_Return_np = culmulative_return_calculate(return_array)
+    print(Culmulative_Return_np)
     categories_list, positive_count_ls, negative_count_ls = reward_count(n_episodes, n_chunks, return_array)
 
     fig, axs = plt.subplots(ncols=3, figsize=(20, 8))
@@ -56,7 +57,7 @@ def reward_plot(n_episodes, n_chunks, return_queue):
     axs[0].plot(range(len(Culmulative_Return_np)), Culmulative_Return_np)
     axs[0].grid(True)
 
-    rolling_length = 500
+    rolling_length = 1000
     axs[1].set_title("Episode Return Filtered Plot")
     # compute and assign a rolling average of the data to provide a smoother graph
     reward_moving_average = (
@@ -78,6 +79,46 @@ def reward_plot(n_episodes, n_chunks, return_queue):
 
     plt.tight_layout()
     plt.legend()
+    plt.show()
+
+    return Culmulative_Return_np, reward_moving_average
+
+def Reward_compare_plot(Culmulative_Return_ls:list, Reward_moving_average_ls:list):
+
+    fig, axs = plt.subplots(ncols=2, figsize=(20, 8))
+    axs[0].set_title("Multi Cumulative return Plot")
+    axs[0].set_xlabel('Iteration')
+    axs[0].set_ylabel('Cumulative return')
+    axs[0].plot(range(len(Culmulative_Return_ls[0])), Culmulative_Return_ls[0], label='Q-Learning')
+    axs[0].plot(range(len(Culmulative_Return_ls[1])), Culmulative_Return_ls[1], label='MC')
+    axs[0].plot(range(len(Culmulative_Return_ls[2])), Culmulative_Return_ls[2], label='SARSA')
+    axs[0].plot(range(len(Culmulative_Return_ls[3])), Culmulative_Return_ls[3], label='Double Q-Learning')
+    axs[0].grid(True)
+    axs[0].legend()
+
+    axs[1].set_title("Multi Episode Return Filtered Plot")
+    axs[1].plot(range(len(Reward_moving_average_ls[0])), Reward_moving_average_ls[0], label='Q-Learning')
+    axs[1].plot(range(len(Reward_moving_average_ls[1])), Reward_moving_average_ls[1], label='MC')
+    axs[1].plot(range(len(Reward_moving_average_ls[2])), Reward_moving_average_ls[2], label='SARSA')
+    axs[1].plot(range(len(Reward_moving_average_ls[3])), Reward_moving_average_ls[3], label='Double Q-Learning')
+    axs[1].grid(True)
+    axs[1].set_xlabel('Iteration')
+    axs[1].set_ylabel('Filter Return')
+    axs[1].legend()
+
+    Expected_Return_Q_Learning = Culmulative_Return_ls[0][-1]/len(Culmulative_Return_ls[0])
+    Expected_Return_MC = Culmulative_Return_ls[1][-1]/len(Culmulative_Return_ls[1])
+    Expected_Return_SARSA = Culmulative_Return_ls[2][-1]/len(Culmulative_Return_ls[2])
+    Expected_Return_Double_Q_Learning = Culmulative_Return_ls[3][-1]/len(Culmulative_Return_ls[3])
+
+    print("============= Expected Return =============")
+    print("Q-Learning: ", Expected_Return_Q_Learning)
+    print("MC: ", Expected_Return_MC)
+    print("SARSA: ", Expected_Return_SARSA)
+    print("Double Q-Learning: ", Expected_Return_Double_Q_Learning)
+    print("============= Expected Return =============")
+
+    # plt.tight_layout()
     plt.show()
 
 def training_plot(return_queue, length_queue, error_queue, rolling_length):
