@@ -81,3 +81,5 @@
     3. Randomly Update $Q_{a}$, $Q_{b}$ & 4. Update $Q$ from 3. by temporal difference  $Q_{b}(s_{t+1}, \text{argmax}(Q_{a}(s_{t+1}, a_{t})))$
   
    <img src="https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/ddda9b79-f3f6-4564-98dc-fa1a655307a3" alt="Image" width="500" height="400">
+
+### For results and analysis, please refer to the 'blackjack_tutorial.ipynb' file.
