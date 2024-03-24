@@ -17,9 +17,12 @@
 
     1. Initial Parameters
   
-   <pre>
+    <pre>
     ```python
-    [blackjack.py]
+    def greet(name):
+        print("Hello, " + name + "!")
+    
+    greet("World")
     ```
     </pre>
 
