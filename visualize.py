@@ -47,7 +47,6 @@ def reward_count(n_episodes, n_chunks, data : np):
 def reward_plot(n_episodes, n_chunks, return_queue):
     return_array = np.array(return_queue).flatten()
     Culmulative_Return_np = culmulative_return_calculate(return_array)
-    print(Culmulative_Return_np)
     categories_list, positive_count_ls, negative_count_ls = reward_count(n_episodes, n_chunks, return_array)
 
     fig, axs = plt.subplots(ncols=3, figsize=(20, 8))
@@ -83,7 +82,7 @@ def reward_plot(n_episodes, n_chunks, return_queue):
 
     return Culmulative_Return_np, reward_moving_average
 
-def Reward_compare_plot(Culmulative_Return_ls:list, Reward_moving_average_ls:list):
+def reward_compare_plot(Culmulative_Return_ls:list, Reward_moving_average_ls:list):
 
     fig, axs = plt.subplots(ncols=2, figsize=(20, 8))
     axs[0].set_title("Multi Cumulative return Plot")
