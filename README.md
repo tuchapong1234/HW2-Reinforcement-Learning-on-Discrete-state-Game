@@ -19,7 +19,7 @@
   
    <pre>
     ```python
-    [blackjack.py](blackjack.py)
+    [blackjack.py]
     ```
     </pre>
 
