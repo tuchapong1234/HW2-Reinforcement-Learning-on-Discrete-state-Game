@@ -16,6 +16,12 @@
 1. Q-Learning
 
     1. Initial Parameters
+  
+   <pre>
+    ```python
+    [blackjack.py](blackjack.py)
+    ```
+    </pre>
 
    <img src="https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/43679bd3-739d-4650-917c-5fa5d496daa0" alt="Image" width="500" height="400">
    
