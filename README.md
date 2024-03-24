@@ -13,6 +13,16 @@
 
 ## Python Code 
 
+In this experiment we implement 4 algorithms including. 
+
+```bash
+class ControlType(Enum):
+    MONTE_CARLO = 1
+    TEMPORAL_DIFFERENCE = 2
+    Q_LEARNING = 3
+    DOUBLE_Q_LEARNING = 4
+```
+
 ### 1. Q-Learning
 
 1.1. Initial Parameters
