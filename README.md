@@ -15,72 +15,215 @@
 
 1. Q-Learning
 
-    1. Initial Parameters
+1.1. Initial Parameters
+       
+```bash
+def __init__(
+            self,
+            control_type: ControlType,
+            learning_rate: float,
+            initial_epsilon: float,
+            epsilon_decay: float,
+            final_epsilon: float,
+            discount_factor: float = 0.95,
+    ):
+        """
+        Initialize the Blackjack Agent.
 
-   <img src="https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/43679bd3-739d-4650-917c-5fa5d496daa0" alt="Image" width="500" height="400">
-   
-    2. get $At$ from $\pi$
-   
-   <img src="https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/4dd6c032-bdde-4452-9004-4977a3e2d597" alt="Image" width="500" height="100">
-   
-    3. Update $Q$ by temporal difference $\max(Q(s_{t+1}, a_{t}))$
-  
-    <img src="https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/dc420a83-250d-49d3-9418-1d425700107c" alt="Image" width="500" height="150">
+        Args:
+            control_type (ControlType): The control type for the agent.
+            learning_rate (float): The learning rate for updating Q-values.
+            initial_epsilon (float): The initial exploration rate.
+            epsilon_decay (float): The rate at which epsilon decays over time.
+            final_epsilon (float): The final exploration rate.
+            discount_factor (float, optional): The discount factor for future rewards. Defaults to 0.95.
+        """
+        self.control_type = control_type
+        self.lr = learning_rate
+        self.discount_factor = discount_factor
+        self.epsilon = initial_epsilon
+        self.epsilon_decay = epsilon_decay
+        self.final_epsilon = final_epsilon
 
+        self.num_of_action = 2
+        self.q_values = defaultdict(lambda: np.zeros(self.num_of_action))
+        self.n_values = defaultdict(lambda: np.zeros(self.num_of_action))
+        self.training_error = []
+```
+
+1.2. get $At$ from $\pi$
+    
+```bash
+def get_action(self, obs: tuple[int, int, bool]) -> int:
+        """
+        Get action based on epsilon-greedy policy.
+
+        Args:
+            obs (tuple[int, int, bool]): The observation state.
+
+        Returns:
+            int: The chosen action.
+        """
+        if np.random.random() < self.epsilon:
+            return np.random.choice(self.num_of_action)
+        else:
+            return int(np.argmax(self.q_values[obs]))
+```
+   
+1.3. Update $Q$ by temporal difference $\max(Q(s_{t+1}, a_{t}))$
+    
+```bash
+ """
+        Update Q-values using Q-Learning.
+
+        Args:
+            obs (tuple[int, int, bool]): Current observation state.
+            action (int): Action taken.
+            reward (float): Reward received.
+            next_obs (tuple[int, int, bool]): Next observation state.
+            terminated (bool): Whether the episode terminated.
+        """
+        future_q_value = (not terminated) * np.max(self.q_values[next_obs])
+        temporal_difference = (
+            reward + self.discount_factor * future_q_value - self.q_values[obs][action]
+        )
+
+        self.q_values[obs][action] = (
+            self.q_values[obs][action] + self.lr * temporal_difference
+        )
+        self.training_error.append(temporal_difference)
+```
 
 2. MC
 
-    1. Initial Parameters
+2.1. Initial Parameters
 
    Same as Q-Learning
 
    Additional Step
+   
+```bash
+if self.control_type == ControlType.MONTE_CARLO:
+            self.obs_hist = []
+            self.action_hist = []
+            self.reward_hist = []
+        elif self.control_type == ControlType.DOUBLE_Q_LEARNING:
+            self.qa_values = defaultdict(lambda: np.zeros(self.num_of_action))
+            self.qb_values = defaultdict(lambda: np.zeros(self.num_of_action))
+```
 
-   <img src="https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/314ff5d2-ee9d-4e1d-86ec-5090a8399458" alt="Image" width="500" height="110">
-
-    2. get $At$ from $\pi$
+2.2. get $At$ from $\pi$
   
    Same as Q-Learning
    
-    3. Update $Q$ by history, $G_{t}$
+2.3. Update $Q$ by history, $G_{t}$
+    
+```bash
+"""
+        Update Q-values using Monte Carlo method.
 
-    <img src="https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/1ab06243-991c-4723-8dc5-7ef33f885951" alt="Image" width="500" height="250">
-   
+        Args:
+            obs (tuple[int, int, bool]): Current observation state.
+            action (int): Action taken.
+            reward (float): Reward received.
+            terminated (bool): Whether the episode terminated.
+        """
+        self.obs_hist.append(obs)
+        self.action_hist.append(action)
+        self.reward_hist.append(reward)
+        if terminated:
+            Gt = 0.0
+            error_list = []
+            for i in reversed(range(len(self.reward_hist))):
+                Gt = (self.discount_factor * Gt) + float(self.reward_hist[i])
+                self.n_values[self.obs_hist[i]][self.action_hist[i]] += 1.0
+                lr = 1.0 / self.n_values[self.obs_hist[i]][self.action_hist[i]]
+                temporal_difference = (
+                    Gt - self.q_values[self.obs_hist[i]][self.action_hist[i]]
+                )
+                self.q_values[self.obs_hist[i]][self.action_hist[i]] += (lr * temporal_difference)
+                error_list.insert(0, temporal_difference)
+            self.training_error.extend(error_list.copy())
+            self.obs_hist.clear()
+            self.action_hist.clear()
+            self.reward_hist.clear()
+```
 
-4. SARSA
+3. SARSA
 
-    1. Initial Parameters
+3.1. Initial Parameters
   
    Same as Q-Learning
    
-    2. get $At$ from $\pi$
+3.2. get $At$ from $\pi$
   
    Same as Q-Learning
    
-    3. Update $Q$ by temporal difference $Q(s_{t+1}, a_{t+1})$
+3.3. Update $Q$ by temporal difference $Q(s_{t+1}, a_{t+1})$
   
    Same as Q-Learning
 
    Change Future Q to $Q(s_{t+1}, a_{t+1})$
+   
+```bash
+future_q_value = (not terminated) * self.q_values[next_obs][next_action]
+```
 
-    <img src="https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/840e51a2-a3ee-4397-b0a4-f55c1a073948" alt="Image" width="500" height="40">
-
-5. Double Q-Learning
-    1. Initial Parameters
+4. Double Q-Learning
+    
+4.1. Initial Parameters
 
    Same as Q-Learning
 
    Additional Step
-  
-   <img src="https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/7258bde0-5fb0-4b8d-a161-fb9e6017fed9" alt="Image" width="500" height="90">
+
+```bash
+elif self.control_type == ControlType.DOUBLE_Q_LEARNING:
+      self.qa_values = defaultdict(lambda: np.zeros(self.num_of_action))
+      self.qb_values = defaultdict(lambda: np.zeros(self.num_of_action))
+```
+
    
-    2. get $At$ from $\pi_{a}$, $\pi_{b}$
+4.2. get $At$ from $\pi_{a}$, $\pi_{b}$
+
+    same as Q-Learning but change to Q that has been average
    
-   <img src="https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/43679bd3-739d-4650-917c-5fa5d496daa0" alt="Image" width="500" height="400">
-   
-    3. Randomly Update $Q_{a}$, $Q_{b}$ & 4. Update $Q$ from 3. by temporal difference  $Q_{b}(s_{t+1}, \text{argmax}(Q_{a}(s_{t+1}, a_{t})))$
-  
-   <img src="https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/ddda9b79-f3f6-4564-98dc-fa1a655307a3" alt="Image" width="500" height="300">
+4.3. Randomly Update $Q_{a}$, $Q_{b}$ & 4. Update $Q$ from 3. by temporal difference  $Q_{b}(s_{t+1}, \text{argmax}(Q_{a}(s_{t+1}, a_{t})))$
+    
+```bash
+"""
+        Update Q-values using Double Q-Learning.
+
+        Args:
+            obs (tuple[int, int, bool]): Current observation state.
+            action (int): Action taken.
+            reward (float): Reward received.
+            next_obs (tuple[int, int, bool]): Next observation state.
+            terminated (bool): Whether the episode terminated.
+        """
+        if np.random.uniform(0, 1) < 0.5:
+            max_next_action = np.argmax(self.qb_values[next_obs])
+            future_q_value = (not terminated) * self.qa_values[next_obs][max_next_action]
+            temporal_difference = (
+                reward + self.discount_factor * future_q_value - self.qb_values[obs][action]
+            )
+            self.qb_values[obs][action] = (
+                self.qb_values[obs][action] + self.lr * temporal_difference
+            )
+            self.training_error.append(temporal_difference)
+        else:
+            max_next_action = np.argmax(self.qa_values[next_obs])
+            future_q_value = (not terminated) * self.qb_values[next_obs][max_next_action]
+            temporal_difference = (
+                reward + self.discount_factor * future_q_value - self.qa_values[obs][action]
+            )
+            self.qa_values[obs][action] = (
+                self.qa_values[obs][action] + self.lr * temporal_difference
+            )
+            self.training_error.append(temporal_difference)
+        for i in range(self.num_of_action):
+            self.q_values[obs][i] = (self.qa_values[obs][i] + self.qb_values[obs][i]) / 2
+```  
 
 ## Results and analysis
 
