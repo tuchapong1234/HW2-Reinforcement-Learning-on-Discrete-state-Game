@@ -98,14 +98,16 @@ To achieve optimal performance and stability in training RL models suitable for 
 
 | Metric          | Q-Learning               |  MC                |SARSA               | Double Q-Learning                |
 |:--------------:|:--------------:|:--------------:|:--------------:|:--------------:|
-| With Usable Ace | Row 1, Cell 2 | Row 1, Cell 3 | Row 1, Cell 4 | Row 1, Cell 5 |
-| Without Usable Ace | Row 2, Cell 2 | Row 2, Cell 3 | Row 2, Cell 4 | Row 2, Cell 5 |
+| With Usable Ace | ![image](https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/aa6d2a53-2a5f-4e87-b363-edb57bd21ff8)| ![image](https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/aa8cb257-f961-429f-84a3-30eebc71f0de)| ![image](https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/9c84adad-2bb7-48c9-921c-15bbd6e0be48)| ![image](https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/fd24838b-51c2-42d3-b2a6-546830f44ae7)|
+| Without Usable Ace | ![image](https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/b614fa0a-c9a0-4f9e-ab4d-a6411807efc2)| ![image](https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/a736ac89-b621-4de1-9540-0307709c94f1)| ![image](https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/5e7b1897-355b-4322-bce0-2a03bcdef248)| ![image](https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/940cbe9d-5b70-4b31-9992-7b58669729bd)|
 
 ### Compare Results of 4 algorithms (Q-Learning, MC, TD, Double Q-Learning) 
 
 In training to find the optimal policy, we conducted training using iterations, specifically 1,000,000 iterations. Subsequently, we plotted the reward values obtained on the training graph. On the left-hand side, we have the Multi Cumulative Return graph, displaying the cumulative return values of each algorithm. On the right-hand side, we have the Multi Episode Return filtered graph, showing the episode return values that have been filtered using the moving average for each algorithm.
 
-กราฟ Training
+#### Compare Training Result
+
+![image](https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/e3540002-4b34-4a5c-92f8-ab9b5426075d)
 
 | Metric          | Q-Learning               |  MC                |SARSA               | Double Q-Learning                |
 |:--------------:|:--------------:|:--------------:|:--------------:|:--------------:|
@@ -120,7 +122,9 @@ When arranging the algorithms based on their expected reward values during train
 3. Q-Learning
 4. Double Q-Learning
 
-กราฟ Testing
+#### Compare Testing Result
+
+![image](https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/067eb0dc-86ea-4e7e-9b83-404fcdbd9874)
 
 | Metric          | Q-Learning               |  MC                |SARSA               | Double Q-Learning                |
 |:--------------:|:--------------:|:--------------:|:--------------:|:--------------:|
