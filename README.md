@@ -90,9 +90,9 @@ To achieve optimal performance and stability in training RL models suitable for 
 
 | Metric          | Q-Learning               |  MC                |SARSA               | Double Q-Learning                |
 |:--------------:|:--------------:|:--------------:|:--------------:|:--------------:|
-| Discount Factor | Row 1, Cell 2 | Row 1, Cell 3 | Row 1, Cell 4 | Row 1, Cell 5 |
-| Epsilon | Row 2, Cell 2 | Row 2, Cell 3 | Row 2, Cell 4 | Row 2, Cell 5 |
-| Learning Rate | Row 2, Cell 2 | Row 2, Cell 3 | Row 2, Cell 4 | Row 2, Cell 5 |
+| Discount Factor | ![image](https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/4baf40e8-84aa-40d1-8b43-ba73a399a951)| ![image](https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/f94e1455-827d-4e92-b94f-6b2e925f317f)| ![image](https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/3408657c-6f41-495e-9006-dd38ff735db9)| ![image](https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/be7c1c3e-e8ec-440d-92bd-61ebafa187b9)|
+| Epsilon | ![image](https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/ed55142b-ce32-4beb-bf6d-26cdb8a0bf90)| ![image](https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/5567c98b-9182-4ed3-8298-62bfbce5bdd5)| ![image](https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/26cf364d-eb53-4d2a-a496-abe5a1fa275c)| ![image](https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/8155ebf7-f8d3-40de-b7cc-378ff5f4f4a5)|
+| Learning Rate | ![image](https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/126f50d0-5469-475b-af41-d9ea0b561f34)| - | ![image](https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/50628616-0c75-40f1-9051-d1599148511e)| ![image](https://github.com/tuchapong1234/HW2-Reinforcement-Learning-on-Discrete-state-Game/assets/113016544/9bcd2800-bfae-42ca-9b47-ff5ac1a3e6c8)|
 
 ### Value & Policy After Training 1,000,000 iterations.
 
